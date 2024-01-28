@@ -1,0 +1,35 @@
+services:
+  data_ingestor:
+    build:
+      context: data_ingestor/
+      args:
+        USER: ${USERNAME}
+        PW: ${PASSWORD}
+        HOST: "pgdatabase"
+        PORT: ${PORT}
+        DB: ${DATABASE}
+        TN: ${TABLE}
+        ZTN: ${ZONESTABLE}
+        URLDATA: ${URLDATA}
+        URLZONES: ${URLZONES}
+    depends_on:
+    - pgdatabase
+    - pgadmin
+
+  pgdatabase:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=${USERNAME}
+      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_DB=${DATABASE}
+    volumes:
+      - "../ny_taxi_postgres_data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5431:5432"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "8080:80"
